@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
+	"contrib.go.opencensus.io/exporter/stackdriver/propagation"
+	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/trace"
 )
 
@@ -36,7 +38,21 @@ func process(ctx context.Context) (string, error) {
 	ctx, span := trace.StartSpan(ctx, "/process")
 	defer span.End()
 
-	res, err := http.Get("http://backendhellotime-service.default.svc.cluster.local:8080")
+	client := &http.Client{
+		Transport: &ochttp.Transport{
+			// Use Google Cloud propagation format.
+			Propagation: &propagation.HTTPFormat{},
+		},
+	}
+
+	req, _ := http.NewRequest("GET", "http://backendhellotime-service.default.svc.cluster.local:8080", nil)
+
+	// The trace ID from the incoming request will be
+	// propagated to the outgoing request.
+	req = req.WithContext(ctx)
+
+	// The outgoing request will be traced with r's trace ID.
+	res, err := client.Do(req)
 	if err != nil {
 		return "", err
 	}
