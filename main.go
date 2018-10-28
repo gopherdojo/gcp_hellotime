@@ -41,7 +41,7 @@ func main() {
 }
 
 func process(ctx context.Context) (string, error) {
-	ctx, span := trace.StartSpan(ctx, "/process")
+	ctx, span := trace.StartSpan(ctx, "/process", trace.WithSampler(trace.AlwaysSample()))
 	defer span.End()
 
 	client := &http.Client{
@@ -51,7 +51,10 @@ func process(ctx context.Context) (string, error) {
 		},
 	}
 
-	req, _ := http.NewRequest("GET", "http://backendhellotime-service.default.svc.cluster.local:8080", nil)
+	req, err := http.NewRequest("GET", "http://backendhellotime-service.default.svc.cluster.local:8080", nil)
+	if err != nil {
+		return "", err
+	}
 
 	// The trace ID from the incoming request will be
 	// propagated to the outgoing request.
