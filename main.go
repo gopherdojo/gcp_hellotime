@@ -14,8 +14,14 @@ import (
 )
 
 func main() {
+	projectID, err := GetProjectID()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("ProjectID=%s\n", projectID)
+
 	exporter, err := stackdriver.NewExporter(stackdriver.Options{
-		ProjectID: "souzoh-demo-gcp-001",
+		ProjectID: projectID,
 	})
 	if err != nil {
 		panic(err)
