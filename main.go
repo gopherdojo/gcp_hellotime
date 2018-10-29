@@ -47,7 +47,8 @@ func process(ctx context.Context) (string, error) {
 	client := &http.Client{
 		Transport: &ochttp.Transport{
 			// Use Google Cloud propagation format.
-			Propagation: &propagation.HTTPFormat{},
+			Propagation:    &propagation.HTTPFormat{},
+			FormatSpanName: formatSpanName,
 		},
 	}
 
@@ -71,4 +72,8 @@ func process(ctx context.Context) (string, error) {
 		return "", err
 	}
 	return string(b), nil
+}
+
+func formatSpanName(r *http.Request) string {
+	return r.URL.Host
 }
