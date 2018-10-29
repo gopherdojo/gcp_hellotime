@@ -4,7 +4,7 @@ steps:
     args: ['build', '.']
     env: ['GO111MODULE=on']
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '--tag=gcr.io/$PROJECT_ID/sinmetal/hellotime:v1.0.0', '.']
+    args: ['build', '--tag=gcr.io/$PROJECT_ID/sinmetal/hellotime/$BRANCH_NAME:$COMMIT_SHA', '.']
   - name: 'gcr.io/cloud-builders/docker'
-    args: ["push", "gcr.io/$PROJECT_ID/sinmetal/hellotime:v1.0.0"]
-images: ['gcr.io/$PROJECT_ID/sinmetal/hellotime:v1.0.0']
+    args: ["push", "gcr.io/$PROJECT_ID/sinmetal/hellotime/$BRANCH_NAME:$COMMIT_SHA"]
+images: ['gcr.io/$PROJECT_ID/sinmetal/hellotime/$BRANCH_NAME:$COMMIT_SHA']
